@@ -1,7 +1,7 @@
 import { dataVerifyTransaction } from "@/types/verify";
 import { getBranchById } from "@/utils/branch";
 import { getEmployeeById } from "@/utils/employee";
-import { closeDataTransaction, fetchTransactionAll, fetchTransactionByBranchId, fetchTransactionByCompanyId, fetchTransactionById, insertTransaction, verifyTransactionBody } from "@/utils/transaction";
+import { closeDataTransaction, fetchDataFrontDetailByTransactionId, fetchTransactionAll, fetchTransactionByBranchId, fetchTransactionByCompanyId, fetchTransactionById, insertTransaction, verifyTransactionBody } from "@/utils/transaction";
 import { NextApiResponse } from "next";
 
 export const handleAddTransaction = async (body: dataVerifyTransaction, res: NextApiResponse) => {
@@ -62,4 +62,12 @@ export const handleGetTransactionAll = async (res: NextApiResponse) => {
     const transactionOrder = await fetchTransactionAll();
 
     return res.status(200).json({ message: "Tables found", transactionItem: transactionOrder, status: true });
+}
+
+export const handleGetCustomerFrontDataById = async (res: NextApiResponse, id: string) => {
+    // fetchDataByTransactionId
+    const dataDetail = await fetchDataFrontDetailByTransactionId(id);
+    if(!dataDetail) return res.status(404).json({ message: [ {message : "พบข้อผิดพลาดข้อมูล"}], customerFrontData: null, status: true });
+    
+    return res.status(200).json({ message: [ {message : "พบข้อมูล"}], customerFrontData: dataDetail, status: true });
 }
