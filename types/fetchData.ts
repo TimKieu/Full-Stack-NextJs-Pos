@@ -245,15 +245,27 @@ export interface orderTransactionByBranch {
   transactionOrder: order | null
 }
 
+export interface orderTransactionAdd {
+  id: string;
+  name: string;
+  stoves: number;
+  people: number;
+  expiration: number;
+  tokenOrder: string | null | undefined;
+  transactionOrder: order | null
+}
+
 export interface order {
   id: string;
   receipt: string;
   startOrder: Date;
   endOrder: Date;
   peoples: number;
+  tokenOrder: string | null;
 }
 
 export interface fetchTransaction {
+  id: string;
   tableId: string;
   receipt: string;
   startOrder: Date;
@@ -261,6 +273,7 @@ export interface fetchTransaction {
   peoples: number;
   totalPrice: number;
   branchId: number;
+  tokenOrder: string | null;
   employeeId: number;
   status: "Active" | "InActive";
 }
@@ -299,7 +312,7 @@ export interface productDataCustomerFrontData {
   Products: productData[];
 }
 
-interface productData {
+export interface productData {
   id: number;
   name: string;
   price: number;

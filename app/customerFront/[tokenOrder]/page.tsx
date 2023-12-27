@@ -6,21 +6,21 @@ import Navbar from "@/app/components/Navbar";
 import CountdownTime from "@/app/components/UI/CountdownTime";
 import CardProduct from "@/app/components/UI/card/CardProduct";
 import SkeletonTable from "@/app/components/UI/loading/SkeletonTable";
-import { useSession } from "next-auth/react";
+import "@/app/customerFront/order.css"
 import React from "react";
 
 interface HomePageFrontProps {
   params: {
-    id: string;
+    tokenOrder: string;
   };
 }
 
 const HomePageFront = ({ params }: HomePageFrontProps) => {
-  const { id } = params;
-  const { data: session } = useSession();
-  const { data, isLoading, isError, refetch, remove } = useDataFront(session?.user.accessToken, id);
+  const { tokenOrder } = params;
+  
+  const { data, isLoading, isError, refetch, remove } = useDataFront(tokenOrder);
 
-  if (!id) {
+  if (!tokenOrder) {
     return <ErrPage />;
   }
 
@@ -45,7 +45,7 @@ const HomePageFront = ({ params }: HomePageFrontProps) => {
     <section>
       <Navbar page="customerFront" />
       <div className="mt-14 flex">
-        <MenuFront onMenuClick={() => console.log("sss")} productType={data.productData} />
+        <MenuFront productType={data.productData} />
         <div className="w-full p-3">
           <div className="mt-3 text-center">
             <p className="text-lg">{data.tablesData.name} ({data.peoples} ท่าน)</p>
@@ -54,7 +54,7 @@ const HomePageFront = ({ params }: HomePageFrontProps) => {
             <CountdownTime time={data.tablesData.expiration} startOrder={data.startOrder} />
             <p className="text-orange-600 text-xs">*เมื่อถึงเวลาสิ้นสุดจะไม่สามารถสั่งรายการอาหารได้</p>
           </div>
-          <div className="mt-3">
+          <div className="mt-5">
               <CardProduct productData={data.productData}/>
           </div>
         </div>

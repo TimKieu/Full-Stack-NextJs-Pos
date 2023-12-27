@@ -45,7 +45,7 @@ CREATE TABLE "Product" (
     "price" DOUBLE PRECISION NOT NULL DEFAULT 0.00,
     "stock" INTEGER NOT NULL,
     "statusSail" "enumStatus" NOT NULL DEFAULT 'Active',
-    "img" VARCHAR(50),
+    "img" TEXT,
     "unitId" INTEGER NOT NULL,
     "productTypeId" INTEGER NOT NULL,
     "companyId" INTEGER NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE "Promotion" (
     "promotionalPrice" DOUBLE PRECISION NOT NULL DEFAULT 0.00,
     "startDate" TIMESTAMP(3) NOT NULL,
     "endDate" TIMESTAMP(3) NOT NULL,
-    "img" VARCHAR(50),
+    "img" TEXT,
     "companyId" INTEGER NOT NULL,
     "status" "enumStatus" NOT NULL DEFAULT 'Active',
 
@@ -154,6 +154,7 @@ CREATE TABLE "Transaction" (
     "totalPrice" DOUBLE PRECISION NOT NULL DEFAULT 0.00,
     "branchId" INTEGER NOT NULL,
     "employeeId" INTEGER NOT NULL,
+    "tokenOrder" TEXT,
     "status" "enumStatus" NOT NULL DEFAULT 'Active',
 
     CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")

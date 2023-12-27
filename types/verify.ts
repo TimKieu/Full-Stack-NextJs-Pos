@@ -70,7 +70,9 @@ export interface dataVerifyProduct {
   cost: number;
   price: number;
   stock: number;
-  img?: File | undefined;
+  img?: {
+    file: File;
+  } | undefined;
   imageUrl?: string;
   unitId: number;
   productTypeId: number;
@@ -86,7 +88,9 @@ export interface dataVerifyPromotion {
   promotionalPrice: number;
   startDate: Date;
   endDate: Date;
-  img?: File | undefined;
+  img?: {
+    file: File;
+  } | undefined;
   imageUrl?: string;
   companyId: number;
   status: "Active" | "InActive";
@@ -138,7 +142,7 @@ export interface promiseDataVerify {
 
 export interface uploadImagesType {
   fileName: string;
-  originFileObj: any;
+  originFileObj: File;
 }
 
 export interface dataVerifyUpdateImgPd {
