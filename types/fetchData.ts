@@ -1,3 +1,5 @@
+import { enumStatus } from "@prisma/client";
+
 export interface fetchCompany {
   id: number;
   name: string;
@@ -242,6 +244,7 @@ export interface orderTransactionByBranch {
   stoves: number;
   people: number;
   expiration: number;
+  tokenOrder?: string | null;
   transactionOrder: order | null
 }
 
@@ -251,7 +254,7 @@ export interface orderTransactionAdd {
   stoves: number;
   people: number;
   expiration: number;
-  tokenOrder: string | null | undefined;
+  tokenOrder?: string | null | undefined;
   transactionOrder: order | null
 }
 
@@ -327,7 +330,7 @@ interface idNameCustomerFrontData {
   name: string;
 }
 
-interface ItemPromotionsCustomerFrontData {
+export interface ItemPromotionsCustomerFrontData {
   productId: number;
   stock: number;
 }
@@ -341,19 +344,170 @@ export interface promotionDataCustomerFrontData {
   endDate: Date;
   img: string | null;
   ItemPromotions: ItemPromotionsCustomerFrontData[];
-  productsItemPromotions: ({
-    unit: {
-      id: number;
-      name: string;
-    };
-    productType: {
-      id: number;
-      name: string;
-    };
+  productsItemPromotions: (productsItemPromotions | null)[];
+}
+
+export interface productsItemPromotions {
+  unit: {
     id: number;
     name: string;
-    price: number;
-    stock: number;
-    img: string | null;
-  } | null)[]
+  };
+  productType: {
+    id: number;
+    name: string;
+  };
+  id: number;
+  name: string;
+  price: number;
+  stock: number;
+  img: string | null;
 }
+
+export interface selectItemPromotion {
+  id: number;
+  name: string;
+}
+
+export interface detailPromotion {
+  promotionId: number;
+  img: string | null;
+  name: string;
+  detail: string;
+  promotionPrice: number;
+  itemPromotionsStock: ItemPromotionsCustomerFrontData[];
+}
+
+export interface orderBillType {
+  id: number;
+  orderDate: Date;
+  transactionId: string;
+  status: "succeed" | "cancel" | "making" | "process";
+}
+
+export interface ItemTransactions {
+  id: number;
+  qty: number;
+  productId: number | null;
+  promotionId: number | null;
+  orderBillId: number;
+}
+
+export interface orderBillTotal {
+  id: number;
+  orderDate: Date;
+  status: "succeed" | "cancel" | "making" | "process";
+  ItemTransactions: ItemTransactions[];
+}
+
+export interface itemTransactionsType {
+  productName: string | null;
+  promotionName: string | null;
+  unitName: string | null;
+  id: number;
+  qty: number;
+  productId: number | null;
+  promotionId: number | null;
+  orderBillId: number;
+  price: number;
+}
+
+export interface orderBillTotalType {
+  index: number;
+  totalBill: number;
+  ItemTransactions: itemTransactionsType[];
+  id: number;
+  orderDate: Date;
+  status: "process" | "succeed" | "cancel" | "making";
+}
+
+export interface detailReceiptType {
+  companyName: string;
+  logo: string | null;
+  branchName: string;
+  startOrder: Date;
+  endOrder: Date;
+  tableName: string;
+  expiration: number;
+  peoples: number;
+}
+
+export interface fectOrderBillByTransactionType {
+  id: string;
+  tableId: string;
+  orderBills: orderBills[];
+}
+
+export interface orderBills {
+  id: number;
+  status: string;
+  tableName: string;
+  transactionId: string;
+  orderDate: string;
+  ItemTransactions: itemTransactionsType[]
+}
+
+export interface enumOrderBill {
+  status: "process" | "succeed" | "cancel" | "making";
+}
+
+export interface dataVerifyOrderBill {
+  orderId: number;
+  status: "process" | "succeed" | "cancel" | "making";
+}
+
+export interface dateFetchReport {
+  branchRpSummaryOfBranchForm: [number];
+  rangeRpSummaryOfBranchForm: {
+    startDate: string;
+    endDate: string;
+  }
+}
+
+export interface dateFetchExpensesReport {
+  branchRpExpensesOfBranchForm: [number];
+  rangeRpExpensesOfBranchForm: {
+    startDate: string;
+    endDate: string;
+  }
+}
+
+export interface fetchRpSummaryOfBranchType {
+  branch: string;
+  startDate: string;
+  endDate: string;
+  resultRpSummaryOfBranch: resultRpSummaryOfBranch[]
+}
+
+export interface fetchRpExpensesOfBranchType {
+  branch: string;
+  startDate: string;
+  endDate: string;
+  resultRpExpensesOfBranch: resultRpExpensesOfBranch[]
+}
+
+export interface resultRpSummaryOfBranch {
+  index: number;
+  branchId: number;
+  branchName: string;
+  toalPeoples: number;
+  totalPrice: number;
+}
+
+export interface resultRpExpensesOfBranch {
+  index: number;
+  id: number;
+  price: number;
+  orderDate: Date;
+  expensesId: number;
+  branchId: number;
+  status: enumStatus;
+  branchs: {
+    name: string;
+  };
+  expenses: {
+    name: string;
+  };
+  orderShow: string;
+}
+
+

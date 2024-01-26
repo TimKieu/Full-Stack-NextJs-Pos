@@ -1,10 +1,13 @@
-import { fetchCustomerFrontData, fetchTransaction, orderTransactionByBranch } from "@/types/fetchData";
+import { fetchCustomerFrontData, fetchTransaction, orderBillType, orderTransactionByBranch } from "@/types/fetchData";
 import { prisma } from "@/pages/lib/prismaDB";
 import { dataVerifyTransaction, promiseDataVerify } from "@/types/verify";
-import { addMinutesToCurrentTime } from "./timeZone";
+import { addMinutesToCurrentTime, dateTimeIso } from "./timeZone";
 import { generateRunningNumber, getMonthNow, getYearNow } from "./utils";
 import jwt from "jsonwebtoken";
 import { fetchTableById } from "./table";
+import { itemCartType, myStateCartItem } from "@/app/store/slices/cartSlice";
+import { fetchProductById } from "./product";
+import { fetchPromotionById } from "./promotion";
 
 const pushData = (message: string) => {
     return { message };
@@ -37,6 +40,26 @@ export const verifyTransactionBody = (data: dataVerifyTransaction): promiseDataV
         verifyStatus.push(
             pushData("กรุณาระบุ : expiration เป็นตัวเลขจำนวนเต็มเท่านั้น")
         );
+
+    // Return
+    return verifyStatus;
+};
+
+export const verifyOrderBillBody = (data: myStateCartItem): promiseDataVerify[] => {
+    const verifyStatus: promiseDataVerify[] = [];
+
+    if (!data.totalPrice) verifyStatus.push(pushData("ไม่พบข้อมูล : totalPrice"));
+    if (!data.totalQty) verifyStatus.push(pushData("ไม่พบข้อมูล : totalQty"));
+    if (!data.itemCart) verifyStatus.push(pushData("ไม่พบข้อมูล : itemCart")); 
+    if (data.itemCart.length < 1) verifyStatus.push(pushData("ไม่พบข้อมูล : itemCart")); 
+    if (!data.transactionId) verifyStatus.push(pushData("ไม่พบข้อมูล : transactionId")); 
+    
+    if (verifyStatus.length > 0) return verifyStatus;
+
+    if (isNaN(Number(data.totalQty))) verifyStatus.push(pushData("กรุณาระบุ : totalQty เป็นตัวเลขเท่านั้น"));
+    if (isNaN(Number(data.totalPrice))) verifyStatus.push(pushData("กรุณาระบุ : totalPrice เป็นตัวเลขเท่านั้น"));
+
+    if (verifyStatus.length > 0) return verifyStatus;
 
     // Return
     return verifyStatus;
@@ -99,7 +122,7 @@ export const fetchTransactionByBranchId = async (branchId: number): Promise<orde
     }
 };
 
-export const fetchTransactionById = async (id: string): Promise<orderTransactionByBranch | null> => {
+export const fetchTransactionByTableId = async (id: string): Promise<orderTransactionByBranch | null> => {
     try {
         const table = await prisma.tables.findUnique({
             select: {
@@ -143,6 +166,24 @@ export const fetchTransactionById = async (id: string): Promise<orderTransaction
         };
 
         return tableWithTransaction;
+    } catch (error) {
+        // Handle any errors here or log them
+        console.error("Error fetching table and transaction:", error);
+        return null;
+    } finally {
+        await prisma.$disconnect();
+    }
+};
+
+export const fetchTransactionById = async (id: string): Promise<fetchTransaction | null> => {
+    try {
+        const transactionOrder = await prisma.transaction.findUnique({
+            where: {
+                id: id,
+            },
+        });
+
+        return transactionOrder;
     } catch (error) {
         // Handle any errors here or log them
         console.error("Error fetching table and transaction:", error);
@@ -324,12 +365,13 @@ export const insertTransaction = async (body: dataVerifyTransaction): Promise<fe
     }
 };
 
-export const closeDataTransaction = async (id: string): Promise<fetchTransaction | null> => {
+export const closeDataTransaction = async (id: string, totalPrice: number): Promise<fetchTransaction | null> => {
     try {
 
         const transaction = await prisma.transaction.update({
             where: { id },
             data: {
+                totalPrice: totalPrice,
                 status: "InActive"
             },
         });
@@ -535,3 +577,32 @@ export const updateTokenOrderTransaction = async ({id, tokenOrder} : {id: string
         await prisma.$disconnect();
     }
 }
+
+export const checkOrderArrayProductId = async (data: itemCartType[]): Promise<promiseDataVerify[]> => {
+    const verifyStatus: promiseDataVerify[] = [];
+
+    for (let index = 0; index < data.length; index++) {
+        const item = data[index];
+        if(item.productId){
+            const checkProductId = await fetchProductById(item.productId);
+            if (!checkProductId) verifyStatus.push(pushData(`ไม่พบข้อมูล : orderBill แถวที่ ${index + 1} (productId)`));
+        }
+    }
+
+    return verifyStatus;
+};
+
+export const checkOrderArrayPromotionId = async (data: itemCartType[]): Promise<promiseDataVerify[]> => {
+    const verifyStatus: promiseDataVerify[] = [];
+
+    for (let index = 0; index < data.length; index++) {
+        const item = data[index];
+        if(item.promotionId){
+            const checkProductId = await fetchPromotionById(item.promotionId);
+            if (!checkProductId) verifyStatus.push(pushData(`ไม่พบข้อมูล : orderBill แถวที่ ${index + 1} (promotionId)`));
+        }
+    }
+
+    return verifyStatus;
+};
+

@@ -1,16 +1,13 @@
 import React, { useState } from "react";
-import {
-  AppstoreOutlined,
-  ContainerOutlined,
-  DesktopOutlined,
-  MailOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  PieChartOutlined,
-} from "@ant-design/icons";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { RiAddBoxFill, RiBillFill , RiHome3Fill } from "react-icons/ri";
+import { FaBoxArchive } from "react-icons/fa6";
+import { FaHouseUser, FaSignOutAlt, FaUser, FaUserPlus } from "react-icons/fa";
+import { BiLogoPaypal, BiSolidReport } from "react-icons/bi";
+import { MdTableRestaurant } from "react-icons/md";
 import type { MenuProps } from "antd";
 import { Button, Menu } from "antd";
-import "@/app/components/menuPage.css";
+import { useSession } from "next-auth/react";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -23,7 +20,9 @@ const getItem = (label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 }
 
 const MenuPage = ({ onMenuClick }: MenuPageProps) => {
+
   const [collapsed, setCollapsed] = useState(false);
+  const { data: session } = useSession();
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -35,30 +34,18 @@ const MenuPage = ({ onMenuClick }: MenuPageProps) => {
   };
 
   const items: MenuItem[] = [
-
-    getItem("เปิดบิลขาย", "1", <PieChartOutlined />),
-    getItem("สาขา", "2", <DesktopOutlined />),
-    getItem("โต๊ะ", "3", <ContainerOutlined />),
-
-    getItem("ข้อมูลผู้ใช้", "sub1", <MailOutlined />, [
-      getItem("ตำแหน่ง", "5"),
-      getItem("พนักงาน", "6"),
-    ]),
-
-    getItem("ค่าใช้จ่าย", "sub2", <AppstoreOutlined />, [
-      getItem("หัวข้อค่าใช้จ่าย", "7"),
-      getItem("บันทึกค่าใช้จ่าย", "8"),
-    ]),
-    getItem("ข้อมูลสินค้า", "sub3", null, [
-      getItem("ประเภทสินค้า", "11"),
-      getItem("หน่วยนับ", "12"),
-      getItem("ข้อมูลสินค้า", "14"),
-    ]),
-    getItem("โปรโมชั่น", "sub4", null, [
-      getItem("หัวข้อโปรโมชั่น", "15"),
-      getItem("บันทึกโปรโมชั่น", "16"),
-    ]),
-    getItem("LogOut", "13", <ContainerOutlined />),
+    session?.user.role === "userAdmin" || session?.user.role === "user" ? getItem("เปิดบิลขาย", "1", <RiBillFill />) : null,
+    session?.user.role === "userAdmin" ? getItem("สาขา", "2", <RiHome3Fill />) : null,
+    session?.user.role === "userAdmin" ? getItem("โต๊ะ", "3", <MdTableRestaurant />) : null,
+    session?.user.role === "userAdmin" ? getItem("ข้อมูลผู้ใช้", "sub1", <FaUser />, [ getItem("ตำแหน่ง", "5"), getItem("พนักงาน", "6") ]) : null,
+    session?.user.role === "userAdmin" ? getItem("ค่าใช้จ่าย", "sub2", <BiLogoPaypal />, [ getItem("หัวข้อค่าใช้จ่าย", "7"), getItem("บันทึกค่าใช้จ่าย", "8") ]) : null,
+    session?.user.role === "userAdmin" ? getItem("ข้อมูลสินค้า", "sub3", <FaBoxArchive />, [ getItem("ประเภทสินค้า", "11"), getItem("หน่วยนับ", "12"), getItem("ข้อมูลสินค้า", "14") ]) : null,
+    session?.user.role === "userAdmin" ? getItem("โปรโมชั่น", "sub4", <RiAddBoxFill />, [ getItem("หัวข้อโปรโมชั่น", "15"), getItem("บันทึกโปรโมชั่น", "16") ]) : null,
+    session?.user.role === "userAdmin" ? getItem("รายงาน", "sub5", <BiSolidReport />, [ getItem("รายงานสรุปยอดขายประจำสาขา", "17"), getItem("รายงานค่าใช้จ่ายประจำสาขา", "18") ]) : null,
+    session?.user.role === "admin" ? getItem("ข้อมูลบริษัท", "19", <RiHome3Fill />) : null,
+    session?.user.role === "admin" ? getItem("ข้อมูลสาขา", "20", <FaHouseUser />) : null,
+    session?.user.role === "admin" ? getItem("ข้อมูลผู้ใช้ประจำสาขา", "21", <FaUserPlus />) : null,
+    getItem("LogOut", "13", <FaSignOutAlt />),
   ];
 
   return (

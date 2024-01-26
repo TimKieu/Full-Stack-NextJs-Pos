@@ -3,13 +3,10 @@
 // Import Next
 import { useEffect, useState } from "react";
 import { SignInResponse, signIn, signOut } from "next-auth/react";
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation'
 // Import antd
 import { Button, Card, Form, Input, message } from "antd";
 import { KeyOutlined, LoginOutlined, UserOutlined } from "@ant-design/icons";
-// Import Css
-import "@/app/auth/auth.css"
 
 type FieldType = {
   username?: string;
@@ -19,7 +16,6 @@ const key = 'loadingMessageKey';
 
 const SignIn = () => {
 
-  const { data: session } = useSession();
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const [isLogin , setIsLogin] = useState<boolean>(false);

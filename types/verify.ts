@@ -1,3 +1,5 @@
+import { enumStatus } from "@prisma/client";
+
 export interface tokenType {
   id: string;
   username: string;
@@ -70,9 +72,11 @@ export interface dataVerifyProduct {
   cost: number;
   price: number;
   stock: number;
-  img?: {
-    file: File;
-  } | undefined;
+  img?:
+    | {
+        file: File;
+      }
+    | undefined;
   imageUrl?: string;
   unitId: number;
   productTypeId: number;
@@ -88,9 +92,11 @@ export interface dataVerifyPromotion {
   promotionalPrice: number;
   startDate: Date;
   endDate: Date;
-  img?: {
-    file: File;
-  } | undefined;
+  img?:
+    | {
+        file: File;
+      }
+    | undefined;
   imageUrl?: string;
   companyId: number;
   status: "Active" | "InActive";
@@ -168,4 +174,46 @@ export interface dataVerifyTransaction {
   expiration: number;
   branchId: number;
   employeeId: number;
+}
+
+export interface dataVerifyRpSummaryOfBranch {
+  branchRpSummaryOfBranchForm: [number];
+  rangeRpSummaryOfBranchForm: [Date, Date];
+}
+
+export interface dataVerifyRpExpensesOfBranch {
+  branchRpExpensesOfBranchForm: [number];
+  rangeRpExpensesOfBranchForm: [Date, Date];
+}
+
+export interface getRpSummaryOfBranchType {
+  id: string;
+  tableId: string;
+  receipt: string;
+  startOrder: Date;
+  endOrder: Date;
+  peoples: number;
+  totalPrice: number;
+  branchId: number;
+  employeeId: number;
+  tokenOrder: string | null;
+  status: enumStatus;
+  branch: {
+    name: string;
+  };
+}
+
+export interface getRpExpensesOfBranchType {
+  id: number;
+  price: number;
+  orderDate: Date;
+  expensesId: number;
+  branchId: number;
+  status: enumStatus;
+  branchs: {
+    name: string;
+  }
+  expenses: {
+    name: string;
+  }
 }

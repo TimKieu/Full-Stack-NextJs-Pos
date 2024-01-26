@@ -2,12 +2,14 @@
 
 import { SessionProvider } from 'next-auth/react'
 import './globals.css'
-import LoadingPage from "./components/LoadingPage";
+
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import store from "./store/store";
-
+// Import Css
+import "@/app/auth/auth.css"
+import LoadingPage from './components/LoadingPage';
 const queryClient = new QueryClient();
 
 export default function RootLayout({ children, }: { children: React.ReactNode; }) {
@@ -15,16 +17,18 @@ export default function RootLayout({ children, }: { children: React.ReactNode; }
     <html lang="en">
       <title>หน้าแรก</title>
       <body>
-        <LoadingPage>
+
           <SessionProvider>
             <Provider store={store}>
               <QueryClientProvider client={queryClient}>
-                {children}
+                <LoadingPage>
+                  {children}
+                </LoadingPage>
                 <ReactQueryDevtools />
               </QueryClientProvider>
             </Provider>
           </SessionProvider>
-        </LoadingPage>
+    
       </body>
     </html>
   )

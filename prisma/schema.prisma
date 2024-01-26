@@ -63,7 +63,6 @@ model Product {
   company          Company           @relation(fields: [companyId], references: [id])
   companyId        Int
   status           enumStatus        @default(Active)
-  ItemTransactions ItemTransaction[]
 }
 
 model Unit {
@@ -176,12 +175,12 @@ model OrderBill {
 }
 
 model ItemTransaction {
-  id          Int       @id @default(autoincrement())
-  qty         Int
-  product     Product   @relation(fields: [productId], references: [id])
-  productId   Int
-  orderBill   OrderBill @relation(fields: [orderBillId], references: [id])
-  orderBillId Int
+  id            Int       @id @default(autoincrement())
+  qty           Int
+  productId     Int?
+  promotionId   Int?
+  orderBill     OrderBill @relation(fields: [orderBillId], references: [id])
+  orderBillId   Int
 }
 
 model Expenses {
@@ -201,6 +200,7 @@ model ItemExpenses {
   expensesId Int
   branchs    Branch   @relation(fields: [branchId], references: [id])
   branchId   Int
+  status     enumStatus     @default(Active)
 }
 
 enum enumStatus {
@@ -215,6 +215,7 @@ enum enumrole {
 }
 
 enum enumOrderBill {
+  process
   succeed
   cancel
   making
